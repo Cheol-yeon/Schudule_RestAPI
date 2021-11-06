@@ -8,10 +8,19 @@ $(function() {
 	
 	$(".menuBtn").on("click", function() {
 		$("#checkedCategory").text($(this).attr("id"));
-		userLoginDialog.dialog("open");
+		//로그인 여부 확인
+	});
+	
+	$(".navbar_toogleBtn").on("click", function() {
+		alert("navbar_toogleBtn!!");
 	});
 
+<<<<<<< HEAD
 	$("#icon").on("click", function() {
+=======
+	$(".navbar_icons").children().on("click", function() {
+		//alert("navbar_icons클릭 >> LOGIN");
+>>>>>>> c1b37b87bf11d53df9a6d7caeebdbf6090ee13ff
 		userLoginDialog.dialog("open");
 	});
 	
