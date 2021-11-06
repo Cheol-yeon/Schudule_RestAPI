@@ -104,4 +104,31 @@ public class ScheduleJdbcDao implements ScheduleDao {
 		}
 		return scheduleList;
 	}
+
+	@Override
+	public int deleteSchedule(int schedule_seq) {
+		String sql = "delete FROM schedule WHERE schedule_seq = ?";
+		System.out.println("deleteSchedule 함수 실행 준비");
+		int result = 0;
+		try {
+			connect();
+			
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, schedule_seq);
+			
+			result = stmt.executeUpdate();
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				disconnect();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return result;
+	}
 }

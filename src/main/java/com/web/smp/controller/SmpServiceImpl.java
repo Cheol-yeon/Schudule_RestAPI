@@ -75,5 +75,10 @@ public class SmpServiceImpl implements SmpService {
 	public List<AllViewEntity> getScheduleList(String query, String categoryNo) {
 		return scheduleDao.getScheduleList(query,categoryNo);
 	}
+
+	@Override
+	public int deleteSchedule(int schedule_seq) {
+		return scheduleDao.deleteSchedule(schedule_seq);
+	}
 	
 }

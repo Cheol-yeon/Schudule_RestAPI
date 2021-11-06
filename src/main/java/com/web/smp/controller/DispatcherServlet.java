@@ -102,4 +102,13 @@ public class DispatcherServlet extends HttpServlet {
 		doGet(request, response);
 	}
 
+	@Override
+	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		System.out.println("processing DELETE request method...");
+		doGet(request, response);
+	}
+	
+	
+
 }

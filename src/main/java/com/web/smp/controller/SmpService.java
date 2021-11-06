@@ -30,4 +30,6 @@ public interface SmpService {
 	Schedule getSchedule(int schedule_seq);
 
 	List<AllViewEntity> getScheduleList(String query,String category);
+	
+	int deleteSchedule(int schedule_seq);
 }

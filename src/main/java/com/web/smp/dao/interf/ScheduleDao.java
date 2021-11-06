@@ -10,4 +10,5 @@ public interface ScheduleDao {
 	
 	List<AllViewEntity> getScheduleList(String query,String categoryNo);
 	
+	int deleteSchedule(int schedule_seq);
 }

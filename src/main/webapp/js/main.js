@@ -12,8 +12,7 @@ $(function() {
 	});
 
 	$("#icon").on("click", function() {
-		 alert("icon클릭");
-		//adminLoginDialog.dialog("open");
+		userLoginDialog.dialog("open");
 	});
 	
 	var userLoginDialog, userLoginForm;
@@ -77,7 +76,12 @@ $(function() {
 				if (res == 'true') {
 					console.log("로그인 성공");
 					var index = $("#checkedCategory").text().substr(8);
-					window.location.assign("/main?category=" + index+"&id="+$("#userId").val());
+					if(index == "") {
+						window.location.assign("/managerMain?id="+$("#userId").val());
+					} else {
+						window.location.assign("/main?category=" + index+"&id="+$("#userId").val());
+					}
+			
 				} else alert("아이디와 비밀번호를 다시 확인해 주세요."); 
 			});
 	}
