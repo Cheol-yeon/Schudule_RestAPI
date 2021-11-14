@@ -24,10 +24,14 @@
 	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	
+	<script type='text/javascript'src='/js/timepicki.js'></script>
+	
 	<link href="/css/common.css" rel="stylesheet" type="text/css">
 	<link href="/css/mainStyle.css" rel="stylesheet" type="text/css">
 	<link href="/css/dialog.css" rel="stylesheet" type="text/css">
 	<link href="/css/calendarStyle.css" rel="stylesheet" type="text/css">
+	
+	<link rel='stylesheet' type='text/css'href='/css/timepicki.css'/>
 </head>
 <body>
 

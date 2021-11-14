@@ -1,11 +1,17 @@
 package com.web.smp.controller.impl;
 
+import java.io.BufferedReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.web.smp.controller.SmpService;
 import com.web.smp.di.entity.AllViewEntity;
@@ -28,7 +34,11 @@ public class ApiScheduleController implements ControllerInterface {
 		String week=request.getParameter("week");
 		String id=request.getParameter("id");
 		
-		String categoryNo=temp[3];
+		String categoryNo = null;
+		
+		if(temp.length>3) {
+			categoryNo=temp[3];
+		}
 		
 		// week 처리용 해당 주차 처음 날과 마지막 날
 		String firstweekday = request.getParameter("fwd");
@@ -85,9 +95,56 @@ public class ApiScheduleController implements ControllerInterface {
 				// POST : /api/schedules
 				// OR
 				// POST : /api/schedules/[카테고리번호]
-				
 				System.out.println("새로운 schedules정보 생성 - ApiScheduleController - POST");
 				
+				AllViewEntity allViewEntity = null;
+				
+				String userId = null;
+			    String json = null;
+			    
+			    try {
+			        BufferedReader reader = request.getReader();
+			        json = reader.readLine();
+			    }catch(Exception e) {
+			        System.out.println("Error reading JSON string: " + e.toString());
+			    }
+			    
+			    System.out.println(json);
+			    
+			    try {
+					allViewEntity = mapper.readValue(json, AllViewEntity.class);
+				} catch (JsonMappingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JsonProcessingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			    
+			    System.out.println(allViewEntity.getMain_content()); // 공대
+			   
+			    Cookie[] cookies = request.getCookies() ;
+			     
+			    if(cookies != null){
+			    	Cookie c = cookies[0] ;
+			        userId = c.getValue(); // 201795037
+			    }
+			    
+			    String rsv_date = allViewEntity.getRsv_date();
+			    rsv_date = rsv_date.replaceAll("년 ", "-");
+			    rsv_date = rsv_date.replaceAll("월 ", "-");
+			    rsv_date = rsv_date.replaceAll("일", "");
+			    System.out.println(rsv_date);
+			    
+			    
+			    int result = smpService.insertSchedule(userId, allViewEntity.getMain_content(), 
+			    		allViewEntity.getSub_content(), rsv_date, allViewEntity.getStart_time(), allViewEntity.getEnd_time());
+			    
+			    if(result == 1) {
+			    	returnMassage = "Insert success";
+			    }
+			    
+	
 			}
 		} else if (temp.length > 3) {// /api/schedules/temp[4] ? query
 			if (query == null) {// /api/schedules/[카테고리번호]

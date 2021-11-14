@@ -5,14 +5,32 @@ $(window).load(function() {//모든 페이지 구성요소 페인팅 완료 후 
 	$(".weeklyCalendar").hide();
 	$(".userScheduleContainer").hide();
 	
+	$('#startTime').timepicki({
+		show_meridian:false,
+		min_hour_value:9,
+		max_hour_value:19,
+		increase_direction:'up',
+		start_time: ["09", "00"],
+		step_size_minutes:30
+	});
+	
+	$('#endTime').timepicki({
+		show_meridian:false,
+		min_hour_value:9,
+		max_hour_value:19,
+		increase_direction:'up',
+		start_time: ["19", "00"],
+		step_size_minutes:30
+	});
+	
 	var path = window.location.href;
 	var path_ = path.split('/').reverse()[0];
-	var categoryName=['studio','rental','consulting'];
-	var categoryNo=categoryName.indexOf(path_)+1; // 사용시 ${categoryNo}이렇게 사용할 것
-	let today = new Date(); // 현재 오늘 날짜 (변함 x , 고정값)
-	
-	let currentDate=today;//페이지에서의 날짜 - CD (2021-11-6)
-	
+	var categoryName = ['studio', 'rental', 'consulting'];
+	var categoryNo = categoryName.indexOf(path_) + 1; // 사용시 ${categoryNo}이렇게 사용할 것
+	const today = new Date(); // 현재 오늘 날짜 (변함 x , 고정값)
+
+	let currentDate = today;//페이지에서의 날짜 - CD (2021-11-6)
+
 	let firstDate_CD;//CD 달의 첫 날 (2021-11-1)
 	let lastDate_CD;//CD 달의 마지막 날 (2021-11-30)
 	let prev_lastDate_CD;//CD 달의 지난 달의 마지막 날 (2021-10-31)
@@ -28,17 +46,17 @@ $(window).load(function() {//모든 페이지 구성요소 페인팅 완료 후 
 
 	buildMonth();
 	function buildMonth() {
-		firstDate_CD =new Date(currentDate);
-        firstDate_CD.setDate(1);
-		
+		firstDate_CD = new Date(currentDate);
+		firstDate_CD.setDate(1);
+
 		$(".currentCalendarHeader").html(`${currentDate.getFullYear()}년&nbsp;&nbsp;&nbsp;&nbsp;${currentDate.getMonth() + 1}월&nbsp;(월)`);
-		
+
 		var daySet = makeElementMonth(firstDate_CD);
 		monthlySetting(daySet);
 
-		fetchData(`/api/schedules/${categoryNo}?year=${currentDate.getFullYear()}&month=${String(currentDate.getMonth()+1).padStart(2,'0')}&week=0`,'monthly');
+		fetchData(`/api/schedules/${categoryNo}?year=${currentDate.getFullYear()}&month=${String(currentDate.getMonth() + 1).padStart(2, '0')}&week=0`, 'monthly');
 	}
-	
+
 	function makeElementMonth(firstDate_CD) { // 11/6
 		//getMonth() :: 1월 0 ~ 12월 11
 		//getDay() :: 월1 ~토 6 일0
@@ -48,12 +66,12 @@ $(window).load(function() {//모든 페이지 구성요소 페인팅 완료 후 
 		let firstDayName = null;//첫주 시작 월요일로 잡음
 		if (firstDate_CD.getDay() == 0) firstDayName = 6; //첫날이 일요일이면 firstDayName = 6
 		else firstDayName = firstDate_CD.getDay() - 1; //첫날이 월요일이면 0 ~ 토요일이면 5
-		
-		lastDate_CD =new Date(currentDate);
-        lastDate_CD.setMonth(lastDate_CD.getMonth()+1);
-        lastDate_CD.setDate(0); // 11/30
-        
-		prev_lastDate_CD =new Date(firstDate_CD);
+
+		lastDate_CD = new Date(currentDate);
+		lastDate_CD.setMonth(lastDate_CD.getMonth() + 1);
+		lastDate_CD.setDate(0); // 11/30
+
+		prev_lastDate_CD = new Date(firstDate_CD);
 		prev_lastDate_CD.setDate(0); // 10/31
 
 		var daySet = [];
@@ -99,7 +117,7 @@ $(window).load(function() {//모든 페이지 구성요소 페인팅 완료 후 
 			$(".dayHeaderContainer").children(":eq(" + i + ")").children().last().html(`&nbsp&nbsp${daySet[cnt++]}`);
 		}
 	}
-	
+
 	function getWeekOfMonth(date) {//date가 한달중 몇째주인지 (월요일~일요일 이 1주임을 기준으로 계산) //20210805를 구하기위해 20210705데이터 IN
 		var selectedDay = date.getDate();//05
 		var first = new Date(date.getFullYear() + '/' + (date.getMonth() + 1) + '/01');//20210805데이터를 집어넣고 내부는 20210705
@@ -107,8 +125,8 @@ $(window).load(function() {//모든 페이지 구성요소 페인팅 완료 후 
 
 		return Math.ceil((selectedDay + monthFirstDateDay) / 7);
 	}
-	
-	async function fetchData(url, pageVal){
+
+	async function fetchData(url, pageVal) {
 		const response = await fetch(url);
 		const json = await response.json();
 		console.log(pageVal);
@@ -121,43 +139,43 @@ $(window).load(function() {//모든 페이지 구성요소 페인팅 완료 후 
 					$(".testArea").text(value.schedule_seq);
 					if (oneday.getDay() == 0) {//일요일
 						$(".week" + getWeekOfMonth(oneday)).children(":eq(6)").
-						children().last().children().append(`<li>&nbsp&nbsp[ ${value.main_content} - ${value.sub_content} ] ${value.start_time}~${value.end_time}</li>`);
+							children().last().children().append(`<li>&nbsp&nbsp[ ${value.main_content} - ${value.sub_content} ] ${value.start_time}~${value.end_time}</li>`);
 					} else {//1~6 월~토
 
 						$(".week" + getWeekOfMonth(oneday)).children(":eq(" + (oneday.getDay() - 1) + ")").
-						children().last().children().append(`<li>&nbsp&nbsp[ ${value.main_content} - ${value.sub_content} ] ${value.start_time}~${value.end_time}</li>`);
+							children().last().children().append(`<li>&nbsp&nbsp[ ${value.main_content} - ${value.sub_content} ] ${value.start_time}~${value.end_time}</li>`);
 					}
-							
-		
-					
+
+
+
 				}
-			} else if (pageVal === 'weekly'){
+			} else if (pageVal === 'weekly') {
 				$(".testArea").text("week");
-			}else if (pageVal === 'category') {
+			} else if (pageVal === 'category') {
 				$("#checkedSubCategory").find("option").remove();//기존 옵션 제거하고 선택된 메인카테고리에 따른 서브카테고리불러올 것
 				for (var value of json) {
 					$('#checkedSubCategory').append($("<option></option>").attr("value", 2).text(`${value}`));
 				}
-			}  else if (pageVal === 'categoryDialog') {
+			} else if (pageVal === 'categoryDialog') {
 				$("#checkedSubDialog").find("option").remove();//기존 옵션 제거하고 선택된 메인카테고리에 따른 서브카테고리불러올 것
 				for (var value of json) {
 					$('#checkedSubDialog').append($("<option></option>").attr("value", 2).text(`${value}`));
 				}
-			} else if (pageVal === 'scheduleList'){
-				
-			} 
-			
+			} else if (pageVal === 'scheduleList') {
+
+			}
+
 		}
 	}
-	
+
 	/************************LEFT*************************/
 	$("#checkedMainCategory").change(function() {//메인 카테고리에 따른 서브카테고리목록 반환
 		var v = $("#checkedMainCategory").val();
-		console.log("checkedMainCategory값 변동 함수 작동 >>" +`/api/contents/${categoryNo}?mainCategory=${encodeURI(encodeURIComponent(v))}`);
+		console.log("checkedMainCategory값 변동 함수 작동 >>" + `/api/contents/${categoryNo}?mainCategory=${encodeURI(encodeURIComponent(v))}`);
 		//한글깨짐 인코딩처리 - encodeURI(encodeURIComponent(v))
 		fetchData(`/api/contents/${categoryNo}?mainCategory=${encodeURI(encodeURIComponent(v))}`, 'category');
 	});
-	
+
 	$("#prevBtn").click(function() {
 	});
 	$("#nextBtn").click(function() {
@@ -172,48 +190,98 @@ $(window).load(function() {//모든 페이지 구성요소 페인팅 완료 후 
 	});
 	$("").click(function() {
 	});
-	
-	
+
+
 	/*************************RIGHT*************************/
-	$(".calendar_day").on("click",function(){
+	$(".calendar_day").on("click", function() {
 		rsvDialog.dialog("open");
-		$("#rsv-dialog-date").text(`${today.getFullYear()}년 ${String(today.getMonth()+1).padStart(2,'0')}월 ${$(this).children().first().text()}일`);
+		$("#rsv-dialog-date").text(`${currentDate.getFullYear()}년 ${String(currentDate.getMonth() + 1).padStart(2, '0')}월 ${$(this).children().first().text()}일`);
 		$("#dialog-rsvList").html($(this).children().last().html());
-		
+
 		//today.getFullYear()+(String(today.getMonth()+1).padStart(2,'0'))+$(this).children().first().text()
 	});
-	
+
 	/*************************RSV dialog *************************/
 	$("#checkedMainDialog").change(function() {
 		var v = $("#checkedMainDialog").val();
 		//한글깨짐 인코딩처리 - encodeURI(encodeURIComponent(v))
 		fetchData(`/api/contents/${categoryNo}?mainCategory=${encodeURI(encodeURIComponent(v))}`, 'categoryDialog');
-	});	
+	});
+
 	var rsvDialog, rsvForm;
-	rsvDialog = $("#rsv-dialog-form").dialog({
-		autoOpen : false,
-		height : 800,
-		width : 800,
-		modal : true,
-		buttons : {
-			"확인" : function() {
-				//rsvForm.trigger("submit");
-			},
-			"취소" : function() {
-				//rsvForm.dialog("close");
-			}
-		},
-		close : function() {
-			//rsvField.removeClass("ui-state-error");
-		}
+	
+	$('#dialogSubmit').on("click", function() {
+		fetch('/api/schedules', {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json; charset=UTF-8"
+					},
+					body: JSON.stringify({
+						main_content: $('select[name=checkedMainDialog] option:selected').text(),
+						sub_content: $('select[name=checkedSubDialog] option:selected').text(),
+						rsv_date: $('#rsv-dialog-date').text(),
+						start_time: $('#startTime').val(),
+						end_time: $('#endTime').val()
+					}),
+					dataType : 'json'
+				})
+					.then(response => response.json())
+					.then(data => console.log(data))
+					.then(t())
+					.then(alert("예약되었습니다"))
+					.then(location.reload())
+					.catch(error => console.log(error))
 	});
 	
+	$('#dialogCancle').on("click", function() {
+		rsvDialog.dialog("close");
+	});
+	
+	rsvDialog = $("#rsv-dialog-form").dialog({
+		autoOpen: false,
+		height: 850,
+		width: 800,
+		modal: true,
+		/*buttons: {
+			"확인": function() {
+				fetch('/api/schedules', {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json; charset=UTF-8"
+					},
+					body: JSON.stringify({
+						main_content: $('select[name=checkedMainDialog] option:selected').text(),
+						sub_content: $('select[name=checkedSubDialog] option:selected').text(),
+						rsv_date: $('#rsv-dialog-date').text(),
+						start_time: $('#startTime').val(),
+						end_time: $('#endTime').val()
+					}),
+					dataType : 'json'
+				})
+					.then(response => response.json())
+					.then(data => console.log(data))
+					.then(t())
+					.then(alert("예약되었습니다"))
+					.then(location.reload())
+					.catch(error => console.log(error))
+			},
+			"취소": function() {
+				rsvDialog.dialog("close");
+			}
+		},
+		close: function() {
+		}*/
+	});
+	function t(){
+		rsvDialog.dialog("close");
+		
+	}
+
 	rsvForm = rsvDialog.find("form").on("submit", function(event) {
 		var valid = true;
-		userLoginField.removeClass("ui-state-error");
 
 		if (valid) {
-			userLoginDialog.dialog("close");
+			rsvDialog.dialog("close");
 		}
 		return valid;
 	});
